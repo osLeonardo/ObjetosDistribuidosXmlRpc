@@ -21,10 +21,10 @@ rl.question(
       } else if (value.Erro) {
         console.log("Erro:", value.Erro);
       } else {
-        console.log("\n📍Previsão para", value.City);
+        console.log("\n📍 Previsão para", value.City);
         console.log("🌡️ Temperatura:", value.Temperature);
-        console.log("💧Umidade:", value.Humidity);
-        console.log("🌥️  Condição:", value.Condition);
+        console.log("💧 Umidade:", value.Humidity);
+        console.log("🌥️ Condição:", value.Condition);
       }
       rl.close();
     });

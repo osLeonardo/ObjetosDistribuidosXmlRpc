@@ -3,62 +3,35 @@ const server = xmlrpc.createServer({ host: "localhost", port: 8080 });
 
 console.log("Servidor XML-RPC rodando em http://localhost:8080");
 
-function normalizeText(text) {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+function randomInRange(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const clima = {
-  Florianópolis: {
-    Temperature: "26°C",
-    Humidity: "65%",
-    Condition: "Ensolarado com nuvens",
-  },
-  "São Paulo": {
-    Temperature: "23°C",
-    Humidity: "70%",
-    Condition: "Chuva fraca",
-  },
-  Curitiba: {
-    Temperature: "18°C",
-    Humidity: "80%",
-    Condition: "Nublado",
-  },
-  "Rio de Janeiro": {
-    Temperature: "30°C",
-    Humidity: "60%",
-    Condition: "Muito calor e sol",
-  },
-  Criciúma: {
-    Temperature: "22°C",
-    Humidity: "75%",
-    Condition: "Parcialmente nublado",
-  },
-};
-
-const cidadeIndex = {};
-for (const nomeOriginal in clima) {
-  const nomeNormalizado = normalizeText(nomeOriginal);
-  cidadeIndex[nomeNormalizado] = nomeOriginal;
-}
+const conditions = [
+  "Ensolarado",
+  "Parcialmente nublado",
+  "Nublado",
+  "Chuva fraca",
+  "Chuva forte",
+  "Tempestade",
+  "Neve",
+  "Neblina",
+];
 
 server.on("GetWeather", function (err, params, callback) {
   const inputCidade = params[0];
-  const normalizada = normalizeText(inputCidade);
-
   console.log(`Requisição recebida para cidade: ${inputCidade}`);
 
-  const nomeCorreto = cidadeIndex[normalizada];
+  const temp = randomInRange(-5, 40);
+  const humidity = randomInRange(20, 100);
+  const condition = conditions[randomInRange(0, conditions.length - 1)];
 
-  if (nomeCorreto) {
-    const dados = clima[nomeCorreto];
-    callback(null, {
-      City: nomeCorreto,
-      ...dados,
-    });
-  } else {
-    callback(null, { Erro: `Cidade '${inputCidade}' não encontrada.` });
-  }
+  callback(null, {
+    City: inputCidade,
+    Temperature: `${temp}°C`,
+    Humidity: `${humidity}%`,
+    Condition: condition,
+  });
 });
+
+server.on("NotFound", (method) => console.log(`Método não encontrado: ${method}`));
